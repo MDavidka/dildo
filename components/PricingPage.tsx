@@ -3,59 +3,79 @@
 import React, { useState } from "react";
 import { 
   Check, Layers, Cpu, Database, Globe, ArrowRight, HelpCircle, ChevronDown, 
-  ChevronUp, Shield, Zap, DollarSign 
+  ChevronUp, Shield, Zap, DollarSign, ArrowLeft, Gamepad2, Users, Sliders
 } from "lucide-react";
 import { useAppStore } from "@/lib/store";
 
 const TIERS = [
   {
-    name: "Hobby",
-    price: "0",
-    desc: "Perfect for personal portfolios, side projects, and hobbyist apps.",
+    name: "Dirt Plan",
+    price: "4.00",
+    ram: "2 GB",
+    desc: "Perfect for a small private survival world or a couple of friends playing vanilla.",
     features: [
-      "1x Shared vCPU",
-      "512 MB RAM",
-      "5 GB High-Speed NVMe Storage",
-      "100 GB Monthly Bandwidth",
-      "Free SSL & Custom Domains",
-      "Managed DB Free Tier (PostgreSQL/Redis)"
+      "1x Shared vCPU (Ryzen 9 7950X)",
+      "2 GB DDR5 ECC RAM",
+      "15 GB NVMe SSD Storage",
+      "Unlimited Player Slots",
+      "Layer 7 Game DDoS Protection",
+      "Instant 45s Server Setup"
     ],
-    cta: "Start Free",
+    cta: "Deploy Dirt Plan",
     popular: false,
-    color: "border-border"
+    color: "border-white/5"
   },
   {
-    name: "Pro Developer",
-    price: "19",
-    desc: "Ideal for production-grade web applications, SaaS startups, and APIs.",
+    name: "Iron Plan",
+    price: "8.00",
+    ram: "4 GB",
+    desc: "Ideal for community survival SMPs, running Spigot/Paper with standard plugins.",
     features: [
-      "2x Dedicated vCPUs",
-      "4 GB RAM",
-      "40 GB High-Speed NVMe Storage",
-      "1 TB Monthly Bandwidth",
-      "Anycast DNS & Edge CDN",
-      "Managed DB Pro Tier (Automatic backups)",
+      "2x Shared vCPUs (Ryzen 9 7950X)",
+      "4 GB DDR5 ECC RAM",
+      "30 GB NVMe SSD Storage",
+      "Unlimited Player Slots",
+      "Full Web FTP File Access",
+      "1-Click Plugin Installer",
       "Priority 24/7 Support"
     ],
-    cta: "Deploy Pro",
+    cta: "Deploy Iron Plan",
     popular: true,
-    color: "border-blue-500 shadow-lg shadow-blue-500/10"
+    color: "border-emerald-500 shadow-lg shadow-emerald-500/10"
   },
   {
-    name: "Business Scale",
-    price: "79",
-    desc: "Built for high-traffic platforms, enterprise workloads, and heavy databases.",
+    name: "Diamond Plan",
+    price: "16.00",
+    ram: "8 GB",
+    desc: "Built for heavy modded survival (Pixelmon, RLCraft) or large active community networks.",
     features: [
-      "4x Dedicated vCPUs",
-      "16 GB RAM",
-      "150 GB High-Speed NVMe Storage",
-      "5 TB Monthly Bandwidth",
-      "Advanced DDoS Protection",
-      "Enterprise Multi-region Databases",
-      "SLA 99.99% Guaranteed uptime",
-      "Dedicated account manager"
+      "3x Dedicated vCPUs (Ryzen 9 7950X)",
+      "8 GB DDR5 ECC RAM",
+      "60 GB NVMe SSD Storage",
+      "Unlimited Player Slots",
+      "Automated Daily Backups",
+      "Custom Modpack Installer",
+      "SLA 99.99% Uptime Guarantee"
     ],
-    cta: "Launch Business",
+    cta: "Deploy Diamond Plan",
+    popular: false,
+    color: "border-blue-500/50"
+  },
+  {
+    name: "Netherite Plan",
+    price: "32.00",
+    ram: "16 GB",
+    desc: "The ultimate tier for massive networks, custom mini-games, and heavy modpacks.",
+    features: [
+      "4x Dedicated vCPUs (Ryzen 9 7950X)",
+      "16 GB DDR5 ECC RAM",
+      "120 GB NVMe SSD Storage",
+      "Unlimited Player Slots",
+      "Dedicated IP & Port Allocation",
+      "Enterprise Backups & Retentions",
+      "Direct Support Slack/Discord"
+    ],
+    cta: "Deploy Netherite Plan",
     popular: false,
     color: "border-purple-500/50"
   }
@@ -63,20 +83,20 @@ const TIERS = [
 
 const FAQS = [
   {
-    q: "How does the hourly billing work?",
-    a: "We calculate your server resources (CPU, RAM, storage) by the second. At the end of the month, you receive a single consolidated invoice for the exact hours your instances were active. Paused servers only incur storage costs, not compute fees."
+    q: "Can I upload custom modpacks or mods?",
+    a: "Absolutely! You can upload any custom modpack, Forge, Fabric, or custom jars directly using our Web FTP File Manager or an external FTP client like FileZilla. We do not restrict file uploads in any way."
   },
   {
-    q: "Can I scale my server resources up or down?",
-    a: "Yes! You can scale your RAM, CPU, and storage allocation at any time from your AetherConsole dashboard with zero downtime. Our system automatically hot-plugs resources and updates routing in seconds."
+    q: "How does your DDoS protection work?",
+    a: "We operate a specialized Layer 7 Game DDoS mitigation network. It is specifically configured with deep packet inspection to filter malicious UDP floods, query exploits, and bot attacks targetting Minecraft (SLP), Steam, Rust, and Source engine queries, keeping your server lag-free."
   },
   {
-    q: "Are database backups automated?",
-    a: "Absolutely. For all active managed database instances (PostgreSQL, Redis, MongoDB), we run daily automated snapshots. On the Pro and Business tiers, backups are retained for 30 days and can be restored with a single click."
+    q: "Can I upgrade or downgrade my RAM later?",
+    a: "Yes, you can scale your RAM and storage up or down at any time with a single click in your NivleConsole. All world directories, plugins, and mod configurations are fully preserved during resource scaling."
   },
   {
-    q: "Is there a bandwidth overage fee?",
-    a: "No. If you reach your monthly bandwidth limit, we do not shut down your site. Instead, we gently throttle transfer speeds slightly or let you upgrade to the next tier with a single click. No surprise bills."
+    q: "Are there any player slot limits?",
+    a: "No! We never charge you based on player slots. Your server has unlimited slots, meaning you can configure whatever count you want. The only limit is the physical RAM and CPU allocated to your server."
   }
 ];
 
@@ -84,76 +104,87 @@ export default function PricingPage() {
   const { setActiveView } = useAppStore();
   
   // Custom Estimator State
-  const [ram, setRam] = useState(4);
-  const [cpu, setCpu] = useState(2);
-  const [storage, setStorage] = useState(80);
-  const [bandwidth, setBandwidth] = useState(2);
+  const [slots, setSlots] = useState(20);
+  const [plugins, setPlugins] = useState(12);
+  const [mods, setMods] = useState(0);
+  const [calcRam, setCalcRam] = useState(4);
+  const [calcPrice, setCalcPrice] = useState(8);
 
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
-  const calculateCustomPrice = () => {
-    const ramCost = ram * 4.5;
-    const cpuCost = cpu * 8;
-    const storageCost = storage * 0.12;
-    const bandwidthCost = bandwidth * 2.5;
-    return (ramCost + cpuCost + storageCost + bandwidthCost).toFixed(2);
-  };
+  // Recalculate RAM when sliders change
+  React.useEffect(() => {
+    const rawRam = 2 + (slots * 0.08) + (plugins * 0.05) + (mods * 0.04);
+    let recommended = 2;
+    if (rawRam <= 2.5) recommended = 2;
+    else if (rawRam <= 3.5) recommended = 3;
+    else if (rawRam <= 4.5) recommended = 4;
+    else if (rawRam <= 6.5) recommended = 6;
+    else if (rawRam <= 9.0) recommended = 8;
+    else if (rawRam <= 13.0) recommended = 12;
+    else if (rawRam <= 18.0) recommended = 16;
+    else recommended = 24;
+
+    setCalcRam(recommended);
+    setCalcPrice(recommended * 2.00);
+  }, [slots, plugins, mods]);
 
   return (
-    <div className="relative w-full overflow-hidden bg-[#030712] min-h-screen py-12 px-4 sm:px-6 lg:px-8">
+    <div className="relative w-full overflow-hidden bg-[#05070f] min-h-screen py-12 px-4 sm:px-6 lg:px-8 text-gray-200">
       {/* Background Grid */}
-      <div className="absolute inset-0 grid-bg opacity-20 pointer-events-none" />
-      <div className="absolute top-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-blue-500/5 blur-[120px] pointer-events-none" />
+      <div className="absolute inset-0 grid-bg opacity-15 pointer-events-none" />
+      <div className="absolute top-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-emerald-500/5 blur-[120px] pointer-events-none" />
 
       <div className="max-w-7xl mx-auto">
         {/* Back button */}
         <button 
           onClick={() => setActiveView("landing")}
-          className="inline-flex items-center gap-2 text-sm font-semibold text-gray-400 hover:text-white mb-12 transition-colors"
+          className="inline-flex items-center gap-2 text-xs font-bold text-gray-400 hover:text-emerald-400 mb-12 transition-colors"
         >
-          <ArrowLeftIcon className="w-4 h-4" /> Back to Homepage
+          <ArrowLeft className="w-4 h-4" /> Back to Homepage
         </button>
 
         {/* Pricing Header */}
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 mb-4">
-            <DollarSign className="w-4 h-4 text-blue-400" />
-            <span className="text-xs font-semibold text-blue-300 uppercase tracking-wider">Predictable Pricing</span>
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 mb-4">
+            <DollarSign className="w-4 h-4 text-emerald-400" />
+            <span className="text-xs font-semibold text-emerald-300 uppercase tracking-wider">Predictable Pricing</span>
           </div>
           <h1 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight">
-            Simple plans. Unlimited scale.
+            Premium performance. Fair pricing.
           </h1>
-          <p className="text-gray-400 mt-4 text-lg">
-            Whether you are launching a personal project or a high-traffic enterprise platform, we have a pricing plan that fits your requirements.
+          <p className="text-gray-400 mt-4 text-sm sm:text-base max-w-xl mx-auto">
+            No slot limits, no hidden upgrades. Pay strictly for the DDR5 ECC RAM and Ryzen CPU threads allocated to your server container.
           </p>
         </div>
 
         {/* Tiers Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-24">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-24">
           {TIERS.map((tier) => (
             <div 
               key={tier.name}
-              className={`p-8 rounded-2xl border bg-card/40 backdrop-blur-md flex flex-col justify-between relative ${tier.color}`}
+              className={`p-6 rounded-2xl border bg-[#0a0d1a]/40 backdrop-blur-md flex flex-col justify-between relative shadow-xl ${tier.color}`}
             >
               {tier.popular && (
-                <span className="absolute top-0 right-6 -translate-y-1/2 px-3 py-1 rounded-full bg-blue-600 text-white text-[10px] font-bold uppercase tracking-wider">
+                <span className="absolute top-0 right-6 -translate-y-1/2 px-3 py-1 rounded-full bg-emerald-500 text-black text-[10px] font-extrabold uppercase tracking-wider">
                   Most Popular
                 </span>
               )}
 
               <div>
-                <h3 className="text-xl font-bold text-white mb-2">{tier.name}</h3>
-                <p className="text-xs text-gray-400 leading-relaxed mb-6">{tier.desc}</p>
+                <h3 className="text-lg font-bold text-white mb-1">{tier.name}</h3>
+                <span className="text-xs text-emerald-400 font-mono font-semibold">{tier.ram} Dedicated RAM</span>
+                <p className="text-xs text-gray-400 leading-relaxed mt-3 mb-6">{tier.desc}</p>
                 
-                <div className="flex items-baseline gap-1 mb-8">
-                  <span className="text-4xl font-extrabold text-white">${tier.price}</span>
-                  <span className="text-gray-400 text-sm">/month</span>
+                <div className="flex items-baseline gap-1 mb-6">
+                  <span className="text-3xl font-extrabold text-white font-mono">${tier.price}</span>
+                  <span className="text-gray-500 text-xs">/month</span>
                 </div>
 
-                <div className="space-y-4 mb-8">
+                <div className="space-y-3.5 mb-8 border-t border-white/5 pt-6">
                   {tier.features.map((feat, idx) => (
-                    <div key={idx} className="flex items-start gap-2.5 text-sm text-gray-300">
-                      <Check className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                    <div key={idx} className="flex items-start gap-2.5 text-xs text-gray-300">
+                      <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" />
                       <span>{feat}</span>
                     </div>
                   ))}
@@ -162,10 +193,10 @@ export default function PricingPage() {
 
               <button
                 onClick={() => setActiveView("dashboard")}
-                className={`w-full py-3 rounded-xl font-semibold transition-all duration-200 flex items-center justify-center gap-1.5 ${
+                className={`w-full py-3 rounded-xl text-xs font-bold transition-all duration-200 flex items-center justify-center gap-1.5 ${
                   tier.popular 
-                    ? "bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-500/20" 
-                    : "bg-secondary hover:bg-gray-800 text-gray-300 hover:text-white border border-border"
+                    ? "bg-emerald-500 hover:bg-emerald-400 text-black shadow-lg shadow-emerald-500/20" 
+                    : "bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white border border-white/5"
                 }`}
               >
                 {tier.cta} <ArrowRight className="w-4 h-4" />
@@ -175,119 +206,102 @@ export default function PricingPage() {
         </div>
 
         {/* Custom Estimator Tool */}
-        <div className="bg-card border border-border rounded-2xl p-8 md:p-12 mb-24 shadow-xl">
+        <div className="bg-[#0b0e1d] border border-white/5 rounded-2xl p-6 sm:p-8 md:p-12 mb-24 shadow-xl">
           <div className="text-center max-w-2xl mx-auto mb-12">
-            <h2 className="text-2xl sm:text-3xl font-bold text-white mb-3">Configure a Custom Server</h2>
-            <p className="text-gray-400 text-sm">
-              Need specific resources? Slide the controls below to configure a custom instance and view instant pricing.
+            <h2 className="text-2xl sm:text-3xl font-bold text-white mb-3">Resource Planner & Estimator</h2>
+            <p className="text-gray-400 text-xs sm:text-sm">
+              Slide the controls below to configure a custom Minecraft server profile. We will automatically calculate the recommended RAM and cost.
             </p>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             {/* Sliders */}
-            <div className="lg:col-span-7 space-y-8">
+            <div className="lg:col-span-7 space-y-6">
               <div>
                 <div className="flex justify-between text-sm font-semibold text-gray-300 mb-2">
-                  <span className="flex items-center gap-1.5"><Layers className="w-4 h-4 text-blue-400" /> Dedicated RAM</span>
-                  <span className="text-blue-400 font-mono text-base">{ram} GB</span>
+                  <span className="flex items-center gap-1.5"><Users className="w-4 h-4 text-emerald-400" /> Concurrent Players</span>
+                  <span className="text-emerald-400 font-mono text-base">{slots} Players</span>
                 </div>
                 <input 
                   type="range" 
                   min="1" 
-                  max="64" 
-                  value={ram}
-                  onChange={(e) => setRam(Number(e.target.value))}
-                  className="w-full h-2 rounded-lg bg-secondary accent-blue-500 cursor-pointer"
+                  max="100" 
+                  value={slots}
+                  onChange={(e) => setSlots(Number(e.target.value))}
+                  className="w-full h-2 rounded-lg bg-white/10 accent-emerald-500 cursor-pointer"
                 />
-                <div className="flex justify-between text-xs text-gray-500 mt-1">
-                  <span>1 GB</span>
-                  <span>32 GB</span>
-                  <span>64 GB</span>
+                <div className="flex justify-between text-[10px] text-gray-500 mt-1">
+                  <span>1 Player</span>
+                  <span>50 Players</span>
+                  <span>100 Players</span>
                 </div>
               </div>
 
               <div>
                 <div className="flex justify-between text-sm font-semibold text-gray-300 mb-2">
-                  <span className="flex items-center gap-1.5"><Cpu className="w-4 h-4 text-emerald-400" /> CPU Allocation</span>
-                  <span className="text-emerald-400 font-mono text-base">{cpu} vCPUs</span>
+                  <span className="flex items-center gap-1.5"><Zap className="w-4 h-4 text-blue-400" /> Active Plugins</span>
+                  <span className="text-blue-400 font-mono text-base">{plugins} Plugins</span>
                 </div>
                 <input 
                   type="range" 
-                  min="1" 
-                  max="32" 
-                  value={cpu}
-                  onChange={(e) => setCpu(Number(e.target.value))}
-                  className="w-full h-2 rounded-lg bg-secondary accent-emerald-500 cursor-pointer"
-                />
-                <div className="flex justify-between text-xs text-gray-500 mt-1">
-                  <span>1 vCPU</span>
-                  <span>16 vCPUs</span>
-                  <span>32 vCPUs</span>
-                </div>
-              </div>
-
-              <div>
-                <div className="flex justify-between text-sm font-semibold text-gray-300 mb-2">
-                  <span className="flex items-center gap-1.5"><Database className="w-4 h-4 text-purple-400" /> NVMe SSD Storage</span>
-                  <span className="text-purple-400 font-mono text-base">{storage} GB</span>
-                </div>
-                <input 
-                  type="range" 
-                  min="10" 
-                  max="1000" 
-                  step="10"
-                  value={storage}
-                  onChange={(e) => setStorage(Number(e.target.value))}
-                  className="w-full h-2 rounded-lg bg-secondary accent-purple-500 cursor-pointer"
-                />
-                <div className="flex justify-between text-xs text-gray-500 mt-1">
-                  <span>10 GB</span>
-                  <span>500 GB</span>
-                  <span>1000 GB</span>
-                </div>
-              </div>
-
-              <div>
-                <div className="flex justify-between text-sm font-semibold text-gray-300 mb-2">
-                  <span className="flex items-center gap-1.5"><Globe className="w-4 h-4 text-pink-400" /> Monthly Bandwidth</span>
-                  <span className="text-pink-400 font-mono text-base">{bandwidth} TB</span>
-                </div>
-                <input 
-                  type="range" 
-                  min="1" 
+                  min="0" 
                   max="50" 
-                  value={bandwidth}
-                  onChange={(e) => setBandwidth(Number(e.target.value))}
-                  className="w-full h-2 rounded-lg bg-secondary accent-pink-500 cursor-pointer"
+                  value={plugins}
+                  onChange={(e) => setPlugins(Number(e.target.value))}
+                  className="w-full h-2 rounded-lg bg-white/10 accent-blue-500 cursor-pointer"
                 />
-                <div className="flex justify-between text-xs text-gray-500 mt-1">
-                  <span>1 TB</span>
-                  <span>25 TB</span>
-                  <span>50 TB</span>
+                <div className="flex justify-between text-[10px] text-gray-500 mt-1">
+                  <span>0 Plugins</span>
+                  <span>25 Plugins</span>
+                  <span>50 Plugins</span>
+                </div>
+              </div>
+
+              <div>
+                <div className="flex justify-between text-sm font-semibold text-gray-300 mb-2">
+                  <span className="flex items-center gap-1.5"><Database className="w-4 h-4 text-purple-400" /> Modpack Size</span>
+                  <span className="text-purple-400 font-mono text-base">{mods} Mods</span>
+                </div>
+                <input 
+                  type="range" 
+                  min="0" 
+                  max="150" 
+                  value={mods}
+                  onChange={(e) => setMods(Number(e.target.value))}
+                  className="w-full h-2 rounded-lg bg-white/10 accent-purple-500 cursor-pointer"
+                />
+                <div className="flex justify-between text-[10px] text-gray-500 mt-1">
+                  <span>0 Mods</span>
+                  <span>75 Mods</span>
+                  <span>150 Mods</span>
                 </div>
               </div>
             </div>
 
             {/* Total Cost Display Card */}
-            <div className="lg:col-span-5 bg-gradient-to-br from-[#0c152b] to-[#040813] border-2 border-blue-500/30 rounded-2xl p-8 shadow-2xl relative overflow-hidden flex flex-col justify-between h-full min-h-[350px]">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full blur-2xl pointer-events-none" />
+            <div className="lg:col-span-5 bg-gradient-to-br from-[#0a161b] to-[#040813] border-2 border-emerald-500/30 rounded-2xl p-6 sm:p-8 shadow-2xl relative overflow-hidden flex flex-col justify-between h-full min-h-[320px]">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none" />
               
               <div>
-                <span className="px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-xs font-semibold text-blue-400 uppercase tracking-wider">Custom Quote</span>
-                <div className="mt-6 flex items-baseline gap-1">
-                  <span className="text-5xl font-extrabold text-white tracking-tight">${calculateCustomPrice()}</span>
-                  <span className="text-gray-400 text-lg">/mo</span>
+                <span className="px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-[10px] font-bold text-emerald-400 uppercase tracking-wider">Recommended Config</span>
+                <div className="mt-6 flex items-baseline gap-1.5">
+                  <span className="text-4xl font-extrabold text-white tracking-tight font-mono">{calcRam} GB</span>
+                  <span className="text-gray-400 text-xs font-semibold">DDR5 ECC RAM</span>
                 </div>
-                <p className="text-gray-400 text-sm mt-4">
-                  Fully customized resources. Includes free automatic scaling and Anycast DNS routing.
+                <div className="mt-2 flex items-baseline gap-1">
+                  <span className="text-2xl font-extrabold text-emerald-400 font-mono">${calcPrice.toFixed(2)}</span>
+                  <span className="text-gray-500 text-sm">/mo</span>
+                </div>
+                <p className="text-gray-400 text-xs mt-4">
+                  Billed monthly. Scale up or down anytime with instant hot-plug memory adjustments and zero data wipes.
                 </p>
               </div>
 
               <button 
                 onClick={() => setActiveView("dashboard")}
-                className="w-full mt-8 py-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold transition-all duration-200 flex items-center justify-center gap-2 shadow-xl shadow-blue-500/20"
+                className="w-full mt-8 py-3.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-xs transition-all duration-200 flex items-center justify-center gap-2 shadow-xl shadow-emerald-500/20"
               >
-                Deploy This Config <ArrowRight className="w-5 h-5" />
+                Launch Server Configuration <ArrowRight className="w-4 h-4" />
               </button>
             </div>
           </div>
@@ -295,23 +309,23 @@ export default function PricingPage() {
 
         {/* FAQs */}
         <div className="max-w-3xl mx-auto">
-          <h2 className="text-2xl sm:text-3xl font-bold text-white text-center mb-8">Frequently Asked Questions</h2>
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-white text-center mb-8">Frequently Asked Questions</h2>
           <div className="space-y-4">
             {FAQS.map((faq, idx) => (
               <div 
                 key={idx}
-                className="border border-border rounded-xl bg-card/30 overflow-hidden transition-all duration-200"
+                className="border border-white/5 rounded-xl bg-[#0a0d1a]/30 overflow-hidden transition-all duration-200"
               >
                 <button
                   onClick={() => setOpenFaq(openFaq === idx ? null : idx)}
-                  className="w-full p-5 text-left font-semibold text-white flex items-center justify-between gap-4 hover:bg-card/50 transition-colors"
+                  className="w-full p-5 text-left font-bold text-sm sm:text-base text-white flex items-center justify-between gap-4 hover:bg-white/[0.02] transition-colors"
                 >
                   <span>{faq.q}</span>
-                  {openFaq === idx ? <ChevronUp className="w-5 h-5 text-gray-400" /> : <ChevronDown className="w-5 h-5 text-gray-400" />}
+                  {openFaq === idx ? <ChevronUp className="w-5 h-5 text-gray-400 shrink-0" /> : <ChevronDown className="w-5 h-5 text-gray-400 shrink-0" />}
                 </button>
 
                 {openFaq === idx && (
-                  <div className="p-5 pt-0 text-sm text-gray-400 border-t border-border bg-background/20 leading-relaxed">
+                  <div className="p-5 pt-0 text-xs sm:text-sm text-gray-400 border-t border-white/5 bg-black/10 leading-relaxed text-left">
                     {faq.a}
                   </div>
                 )}
@@ -321,26 +335,5 @@ export default function PricingPage() {
         </div>
       </div>
     </div>
-  );
-}
-
-// Simple ArrowLeft icon helper to avoid missing imports
-function ArrowLeftIcon(props: React.SVGProps<SVGSVGElement>) {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      {...props}
-    >
-      <path d="m12 19-7-7 7-7" />
-      <path d="M19 12H5" />
-    </svg>
   );
 }

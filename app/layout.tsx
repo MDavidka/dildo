@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "AetherHost — Next-Gen AI & Cloud Application Hosting",
-  description: "Deploy, scale, and monitor your full-stack applications, static sites, and AI models in seconds. Global edge network, instant setups, and real-time telemetry.",
+  title: "Nivle Host — Premium Minecraft & Game Server Hosting",
+  description: "Lag-free game server hosting powered by 5.8 GHz AMD Ryzen 9 7950X CPUs, ultra-fast NVMe SSDs, specialized Layer 7 DDoS shielding, and our custom NivleConsole game panel.",
 };
 
 export default function RootLayout({
@@ -12,8 +12,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="bg-[#030712] dark">
-      <body className="antialiased min-h-screen flex flex-col">
+    <html lang="en" className="bg-[#05070f] dark">
+      <body className="antialiased min-h-screen flex flex-col bg-[#05070f]">
         {children}
       </body>
     </html>

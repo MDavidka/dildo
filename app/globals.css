@@ -3,24 +3,24 @@
 @tailwind utilities;
 
 :root {
-  --background: #030712; /* Deep dark obsidian */
+  --background: #05070f; /* Deep dark obsidian/indigo */
   --foreground: #f9fafb; /* Off-white */
   
-  --primary: #3b82f6; /* Electric Blue */
-  --primary-foreground: #ffffff;
+  --primary: #10b981; /* Emerald Green */
+  --primary-foreground: #000000;
   
-  --secondary: #1f2937; /* Gray-800 */
+  --secondary: #161b30; /* Darker blue-gray */
   --secondary-foreground: #f3f4f6;
   
-  --muted: #111827; /* Gray-900 */
+  --muted: #0b0e1d; /* Deep blue-black */
   --muted-foreground: #9ca3af; /* Gray-400 */
   
-  --accent: #10b981; /* Emerald Green */
+  --accent: #3b82f6; /* Electric Blue */
   --accent-foreground: #ffffff;
   
-  --border: #1f2937; /* Gray-800 */
+  --border: rgba(255, 255, 255, 0.05); /* Soft white borders */
   
-  --card: #0b0f19; /* Slightly lighter deep blue-gray */
+  --card: #0b0e1d; /* Slightly lighter deep card background */
   --card-foreground: #f9fafb;
   
   --radius: 0.75rem;
@@ -39,23 +39,23 @@ body {
   height: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: #030712;
+  background: #05070f;
 }
 ::-webkit-scrollbar-thumb {
-  background: #1f2937;
+  background: #161b30;
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #374151;
+  background: #1f294d;
 }
 
 /* Glow effects */
 .glow-primary {
-  box-shadow: 0 0 40px -10px rgba(59, 130, 246, 0.25);
+  box-shadow: 0 0 40px -10px rgba(16, 185, 129, 0.25);
 }
 
 .glow-accent {
-  box-shadow: 0 0 40px -10px rgba(16, 185, 129, 0.25);
+  box-shadow: 0 0 40px -10px rgba(59, 130, 246, 0.25);
 }
 
 .glow-purple {
@@ -63,12 +63,12 @@ body {
 }
 
 .grid-bg {
-  background-image: linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-                    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-image: linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
   background-size: 40px 40px;
   background-position: center;
 }
 
 .radial-fade {
-  background: radial-gradient(circle at center, transparent 10%, #030712 90%);
+  background: radial-gradient(circle at center, transparent 10%, #05070f 90%);
 }

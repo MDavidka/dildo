@@ -18,12 +18,12 @@ export default function Home() {
 
   if (!mounted) {
     return (
-      <div className="min-h-screen bg-[#030712] flex items-center justify-center">
+      <div className="min-h-screen bg-[#05070f] flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-emerald-400 flex items-center justify-center animate-pulse">
-            <span className="w-4 h-4 rounded-full bg-white animate-ping" />
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-400 to-blue-500 flex items-center justify-center animate-pulse shadow-lg shadow-emerald-500/20">
+            <span className="w-3 h-3 rounded-full bg-black animate-ping" />
           </div>
-          <p className="text-sm text-gray-500 font-mono tracking-wider animate-pulse">BOOTING AETHERHOST...</p>
+          <p className="text-xs text-gray-500 font-mono tracking-widest animate-pulse">BOOTING NIVLE HOST...</p>
         </div>
       </div>
     );
